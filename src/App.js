@@ -1,9 +1,9 @@
-{/*
-  A web app for getting the weather in a given city
-*/}
-
-
 import React, { useState } from "react";
+{
+  /*
+  A web app for getting the weather in a given city
+*/
+}
 
 /*
   This is a constant variable that keeps hold of the key and the
@@ -15,12 +15,10 @@ const api = {
   base: "https://api.openweathermap.org/data/2.5/",
 };
 
-
 /*
   Main function for the web app
  */
 function App() {
-
   /*
     query, isQuery: this is used for the search bar, to get the inputted city.
     weather, setWeather: this is used to get the api calls, gets the weather in JSON format.
@@ -29,8 +27,7 @@ function App() {
   const [query, setQuery] = useState("");
   const [weather, setWeather] = useState({});
   const [isToggled, setToggled] = useState(false);
-  
-  
+
   /*
     Function used to switch between celsius and fahrenheit
   */
@@ -43,7 +40,7 @@ function App() {
   */
 
   const search = (evt) => {
-    if (evt.key === "Enter" && isToggled) {
+    if (evt.key === "Enter" && query.length != 0) {
       fetch(`${api.base}weather?q=${query}&units=metric&APPID=${api.key}`)
         .then((res) => res.json())
         .then((result) => {
@@ -51,14 +48,31 @@ function App() {
           setQuery("");
         });
     }
-    if (evt.key === 'Enter' && !isToggled){
-      fetch(`${api.base}weather?q=${query}&units=imperial&APPID=${api.key}`)
-        .then((res) => res.json())
-        .then((result) => {
-          setWeather(result);
-          setQuery("");
-        });
-    }
+  };
+
+  /*
+    This function convert a give temp to fahrenheit
+  */
+  const celsiusToFahrenheit = (temp) => {
+    return temp * (9 / 5) + 32;
+  };
+
+
+  /*
+    Returns the appropiate temp based on whether the user selected
+    celsius or fahrenheit
+  */
+  const celsiusOrFahrenheit = (temp) => {
+    return isToggled
+      ? `${Math.round(temp)}°c`
+      : `${Math.round(celsiusToFahrenheit(temp))}°f`;
+  };
+
+  /* 
+    Captializes a given string
+   */
+  const capitalize = (desc) => {
+    return desc.charAt(0).toUpperCase() + desc.slice(1);
   };
 
   /*
@@ -93,7 +107,7 @@ function App() {
     let month = months[d.getMonth()];
     let year = d.getFullYear();
 
-    return `${day} ${date} ${month} ${year}`;
+    return `${day} ${date},  ${month}, ${year}`;
   };
 
   return (
@@ -106,7 +120,7 @@ function App() {
     <div
       className={
         typeof weather.main != "undefined"
-          ? (weather.main.temp > 16 && isToggled) || (weather.main.temp > 60 && !isToggled)
+          ? weather.main.temp > 16
             ? "app warm"
             : "app"
           : "app"
@@ -120,7 +134,7 @@ function App() {
             placeholder="Enter a city...."
             onChange={(e) => setQuery(e.target.value)}
             value={query}
-            onKeyPress={search}
+            onKeyPress={search} 
           />
         </div>
         {typeof weather.main != "undefined" ? (
@@ -132,19 +146,31 @@ function App() {
               <div className="date">{dateBuilder(new Date())}</div>
             </div>
             <div className="weather-box">
-              <div className="temp">{Math.round(weather.main.temp)}
-              <b>{isToggled ? '°c' : '°f'}</b>
+              <div className="temp">
+                <div>Current: {celsiusOrFahrenheit(weather.main.temp)}</div>
+                <div>
+                  Feels Like: {celsiusOrFahrenheit(weather.main.feels_like)}
+                </div>
+                <div>Low: {celsiusOrFahrenheit(weather.main.temp_min)}</div>
+                <div>High: {celsiusOrFahrenheit(weather.main.temp_max)}</div>
               </div>
-              <div className="weather">{weather.weather[0].main}</div>
+              <div className="weather">
+                {capitalize(weather.weather[0].description)}
+              </div>
+              <div className="temp">
+                <img
+                  src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
+                />
+              </div>
             </div>
           </div>
         ) : (
           ""
         )}
         <div>
-          <div className= "bottomright" id="bit00_3">
+          <div className="bottomright" id="bit00_3">
             <label class="switch">
-              <input type="checkbox" id="checkbox1" onClick={toggleTrueFalse}/>
+              <input type="checkbox" id="checkbox1" onClick={toggleTrueFalse} />
               <div class="slider round">
                 <span class="on">°C</span>
                 <span class="off">°F</span>
