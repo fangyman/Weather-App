@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-{
-  /*
+import "./App.css";
+
+/*
   A web app for getting the weather in a given city
 */
-}
 
 /*
   This is a constant variable that keeps hold of the key and the
@@ -40,7 +40,7 @@ function App() {
   */
 
   const search = (evt) => {
-    if (evt.key === "Enter" && query.length != 0) {
+    if (evt.key === "Enter" && query.length !== 0) {
       fetch(`${api.base}weather?q=${query}&units=metric&APPID=${api.key}`)
         .then((res) => res.json())
         .then((result) => {
@@ -57,15 +57,14 @@ function App() {
     return temp * (9 / 5) + 32;
   };
 
-
   /*
     Returns the appropiate temp based on whether the user selected
     celsius or fahrenheit
   */
   const celsiusOrFahrenheit = (temp) => {
     return isToggled
-      ? `${Math.round(temp)}°c`
-      : `${Math.round(celsiusToFahrenheit(temp))}°f`;
+      ? `${Math.round(temp)}°C`
+      : `${Math.round(celsiusToFahrenheit(temp))}°F`;
   };
 
   /* 
@@ -134,7 +133,7 @@ function App() {
             placeholder="Enter a city...."
             onChange={(e) => setQuery(e.target.value)}
             value={query}
-            onKeyPress={search} 
+            onKeyPress={search}
           />
         </div>
         {typeof weather.main != "undefined" ? (
@@ -160,6 +159,7 @@ function App() {
               <div className="temp">
                 <img
                   src={`http://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
+                  alt=" "
                 />
               </div>
             </div>
